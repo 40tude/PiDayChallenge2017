@@ -23,25 +23,25 @@ int main() {
   std::cout << std::setprecision(9);
   
   for (auto n = 0; n <10; ++n) {
-    auto Radius					= pow(10, n);																						// Radius in the form of 10^n where 0 <= n <= 9 
+    auto Radius					= pow(10, n);                                           // Radius in the form of 10^n where 0 <= n <= 9 
     auto RadiusSquared	= Radius * Radius;
 
-    Rand_Double GenerateNumber {0.0, Radius};																		// Create a random number generator between 0 and CurrentRadius
+    Rand_Double GenerateNumber {0.0, Radius};                                   // Create a random number generator between 0 and CurrentRadius
 
-    for (auto m = 0; m < 7; ++m) {																							
+    for (auto m = 0; m < 7; ++m) {
       auto NbPointsIn = 0;
-      int NbPoints		= static_cast<int>(pow(10, m));														// Nb of points in the form of 10^m where 0 <= m <= 7
+      int NbPoints		= static_cast<int>(pow(10, m));                           // Nb of points in the form of 10^m where 0 <= m <= 7
 
       for (auto j = 0; j < NbPoints; j++) {
-        auto x										= GenerateNumber();
+        auto x                    = GenerateNumber();
         auto y										= GenerateNumber();
         auto RandomSquaredRadius	= x*x + y*y;
         if (RandomSquaredRadius <= RadiusSquared) NbPointsIn++;
       }
       
       auto EstimatedPi = (4.0 * NbPointsIn) / NbPoints;
-      constexpr double PI = 3.14159265359;																			// A reference value you can use for Pi is 3.14159265359
-      std::cout << std::fabs(PI - EstimatedPi) << "\t";													// The output should show the distance between the estimates and a reference value of Pi. 
+      constexpr double PI = 3.14159265359;                                      // A reference value you can use for Pi is 3.14159265359
+      std::cout << std::fabs(PI - EstimatedPi) << "\t";                         // The output should show the distance between the estimates and a reference value of Pi. 
     }
     std::cout << std::endl;
   }
