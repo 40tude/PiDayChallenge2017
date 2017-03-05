@@ -1,5 +1,4 @@
 #include "stdafx.h"
-#include <iomanip>
 
 // ----------------------------------------------------------------------------
 // Returns a number in the range [a, b] and NOT in the range [a, b) as uniform_real_distibution does. See how nextafter() is used.
@@ -18,12 +17,11 @@ private:
 
 // ----------------------------------------------------------------------------
 int main() {
-  std::cout << std::fixed;
-  std::cout << std::setprecision(9);
+  std::cout << std::fixed << std::setprecision(9);                              // set the format attributes
   
   for (auto n = 0; n <10; ++n) {
-    auto Radius					= pow(10, n);                                           // Radius in the form of 10^n where 0 <= n <= 9 
-    auto RadiusSquared	= Radius * Radius;
+    auto Radius         = pow(10, n);                                           // Radius in the form of 10^n where 0 <= n <= 9 
+    auto RadiusSquared  = Radius * Radius;
 
     Rand_Double GenerateNumber {0.0, Radius};                                   // Create a random number generator between 0 and CurrentRadius
 
