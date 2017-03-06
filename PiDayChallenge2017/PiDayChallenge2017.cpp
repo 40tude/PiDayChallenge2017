@@ -18,7 +18,7 @@ private:
 
 // ----------------------------------------------------------------------------
 int main() {
-  std::cout << std::fixed << std::setprecision(9);                              // Modifies the default formatting for floating-point output
+  std::cout << std::fixed << std::setprecision(9);                              // Modifies the default formatting for "nice" double output
   
   for (auto n = 0; n <10; ++n) {
     auto Radius         = pow(10, n);                                           // Radius in the form of 10^n where 0 <= n <= 9 
