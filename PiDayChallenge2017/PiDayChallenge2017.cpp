@@ -4,7 +4,8 @@
 // Returns a number in the range [a, b] and NOT in the range [a, b) as uniform_real_distibution does. See how nextafter() is used.
 struct RndDouble {
 public:
-  explicit RndDouble(double const& low, double const& high) : mRandomEngine { std::chrono::high_resolution_clock::now().time_since_epoch().count() }, mDistribution { low, std::nextafter(high, DBL_MAX) } {}
+	explicit RndDouble(double const& low, double const& high) : mRandomEngine{ std::random_device()() }, mDistribution{ low, std::nextafter(high, DBL_MAX) } {
+	}
 
   double operator()() {
     return mDistribution(mRandomEngine);
@@ -17,27 +18,27 @@ private:
 
 // ----------------------------------------------------------------------------
 int main() {
-  std::cout << std::fixed << std::setprecision(9);                              // Modifies the default formatting for floating-point input
+  std::cout << std::fixed << std::setprecision(9);                              // Modifies the default formatting for floating-point output
   
   for (auto n = 0; n <10; ++n) {
     auto Radius         = pow(10, n);                                           // Radius in the form of 10^n where 0 <= n <= 9 
-    auto RadiusSquared  = Radius * Radius;
+    auto SquaredRadius  = Radius * Radius;
 
-    RndDouble GenerateNumber {0.0, Radius};                                     // Create a random number generator between 0 and Radius
+    RndDouble GenerateRndDbl {0.0, Radius};                                     // Create generator of random double in the range of [0, Radius]
 
-    for (auto m = 0; m < 7; ++m) {
-      auto NbPoints   = pow(10, m);                                             // Nb of points in the form of 10^m where 0 <= m <= 7
-      auto NbPointsIn = 0;
+    for (auto m = 0; m < 8; ++m) {
+      auto TotalNbPoints    = pow(10, m);                                       // Nb of points in the form of 10^m where 0 <= m <= 7
+      auto NbPointsInCircle = 0;
 
-      for (auto j = 0; j < NbPoints; j++) {
-        auto x                    = GenerateNumber();
-        auto y                    = GenerateNumber();
+      for (auto j = 0; j < TotalNbPoints; j++) {
+        auto x                    = GenerateRndDbl();
+        auto y                    = GenerateRndDbl();
         auto RandomSquaredRadius  = x*x + y*y;
-        if (RandomSquaredRadius <= RadiusSquared) NbPointsIn++;
+        if (RandomSquaredRadius <= SquaredRadius) NbPointsInCircle++;
       }
 
-      auto             EstimatedPi = (4.0 * NbPointsIn) / NbPoints;
-      constexpr double PI          = 3.14159265359;                             // A reference value you can use for Pi is 3.14159265359
+      auto EstimatedPi    = (4.0 * NbPointsInCircle) / TotalNbPoints;
+      constexpr double PI = 3.14159265359;                                      // A reference value you can use for Pi is 3.14159265359
       std::cout << std::fabs(PI - EstimatedPi) << "\t";                         // The output should show the distance between the estimates and a reference value of Pi. 
     }
     std::cout << std::endl;
