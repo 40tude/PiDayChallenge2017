@@ -22,7 +22,7 @@ private:
 // ----------------------------------------------------------------------------
 std::vector<double> MyTask(double const& Radius) {
   
-  constexpr int M = 8; // 8
+  constexpr int M = 8; 
   std::vector<double> Distances(M);
 
   RndDouble GenerateNumber{ 0.0, Radius };                                      // Create a random number generator between 0 and Radius

@@ -29,7 +29,7 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PiDayChallenge2017 v3.cpp">
+    <ClCompile Include="PiDayChallenge2017.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

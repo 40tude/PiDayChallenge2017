@@ -1,4 +1,5 @@
 #include "stdafx.h"
+//#include <chrono>
 
 // ----------------------------------------------------------------------------
 // Returns a number in the range [a, b] and NOT in the range [a, b) as uniform_real_distibution does. See how nextafter() is used.
@@ -19,7 +20,7 @@ private:
 // ----------------------------------------------------------------------------
 int main() {
 
-  auto time0 = std::chrono::high_resolution_clock::now();
+  //auto time0 = std::chrono::high_resolution_clock::now();
 
   std::cout << std::fixed << std::setprecision(9);                              // Modifies the default formatting for "nice" double output
   
@@ -47,8 +48,8 @@ int main() {
     std::cout << std::endl;
   }
 
-  auto time1 = std::chrono::high_resolution_clock::now();
-  std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(time1 - time0).count() << " miliseconds passed\n";
+  //auto time1 = std::chrono::high_resolution_clock::now();
+  //std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(time1 - time0).count() << " miliseconds passed\n";
 
   std::cout << "Press ENTER to quit : ";
   std::cin.get();                                                               
