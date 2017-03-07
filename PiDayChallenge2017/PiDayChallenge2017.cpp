@@ -18,6 +18,9 @@ private:
 
 // ----------------------------------------------------------------------------
 int main() {
+
+  auto time0 = std::chrono::high_resolution_clock::now();
+
   std::cout << std::fixed << std::setprecision(9);                              // Modifies the default formatting for "nice" double output
   
   for (auto n = 0; n <10; ++n) {
@@ -43,6 +46,10 @@ int main() {
     }
     std::cout << std::endl;
   }
+
+  auto time1 = std::chrono::high_resolution_clock::now();
+  std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(time1 - time0).count() << " miliseconds passed\n";
+
   std::cout << "Press ENTER to quit : ";
   std::cin.get();                                                               
 }
