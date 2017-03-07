@@ -4,8 +4,8 @@
 // Returns a number in the range [a, b] and NOT in the range [a, b) as uniform_real_distibution does. See how nextafter() is used.
 struct RndDouble {
 public:
-	explicit RndDouble(double const& low, double const& high) : mRandomEngine{ std::random_device()() }, mDistribution{ low, std::nextafter(high, DBL_MAX) } {
-	}
+  explicit RndDouble(double const& low, double const& high) : mRandomEngine{ std::random_device()() }, mDistribution{ low, std::nextafter(high, DBL_MAX) } {
+  }
 
   double operator()() {
     return mDistribution(mRandomEngine);
@@ -44,5 +44,5 @@ int main() {
     std::cout << std::endl;
   }
   std::cout << "Press ENTER to quit : ";
-  std::cin.get();                                                               //std::cin.ignore((std::numeric_limits<std::streamsize>::max)(), '\n');
+  std::cin.get();                                                               
 }
