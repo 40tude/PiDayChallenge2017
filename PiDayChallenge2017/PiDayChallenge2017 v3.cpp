@@ -1,13 +1,13 @@
 #include "stdafx.h"
-
-#include <chrono>
 #include <future>
+
+using VectOfErrors = std::vector<double>;
 
 // ----------------------------------------------------------------------------
 // Returns a number in the range [a, b] and NOT in the range [a, b) as uniform_real_distibution does. See how nextafter() is used.
-struct RndDouble {
+struct RndDbl {
 public:
-  explicit RndDouble(double const& low, double const& high) : mRandomEngine{ std::chrono::high_resolution_clock::now().time_since_epoch().count() }, mDistribution{ low, std::nextafter(high, DBL_MAX) } {
+  explicit RndDbl(double const& low, double const& high) : mRandomEngine{ std::chrono::high_resolution_clock::now().time_since_epoch().count() }, mDistribution{ low, std::nextafter(high, DBL_MAX) } {
   }
 
   double operator()() {
@@ -20,57 +20,60 @@ private:
 };
 
 // ----------------------------------------------------------------------------
-std::vector<double> MyTask(double const& Radius) {
+VectOfErrors ErrorsCalculation(double const& Radius) {                          // Each task works at radius constant (1 or 10 or 100...)
   
-  constexpr int M = 8; 
-  std::vector<double> Distances(M);
+  auto         RadiusSquared = Radius * Radius;
+  RndDbl       GenerateNumber { 0.0, Radius };                                  // GenerateNumber is a random generator of doubles between 0.0 and Radius
+  VectOfErrors vErrors;                                                         // vErrors contains the differents errors while the # of points increases
 
-  RndDouble GenerateNumber{ 0.0, Radius };                                      // Create a random number generator between 0 and Radius
-  auto RadiusSquared = Radius * Radius;
+  constexpr int NB_SET_OF_POINTS = 8;
+  for (auto m = 0; m < NB_SET_OF_POINTS; ++m) {
+    auto NbPoints         = pow(10, m);                                         // Nb of points in the form of 10^m where 0 <= m <= 7
+    auto NbPointsInCircle = 0;
 
-  for (auto m = 0; m < M; ++m) {
-    auto NbPoints = pow(10, m);                                                 // Nb of points in the form of 10^m where 0 <= m <= 7
-    auto NbPointsIn = 0;
-
-    for (auto j = 0; j < NbPoints; j++) {
-      auto x = GenerateNumber();
-      auto y = GenerateNumber();
+    for (auto n = 0; n < NbPoints; ++n) {
+      auto x                   = GenerateNumber();
+      auto y                   = GenerateNumber();
       auto RandomSquaredRadius = x*x + y*y;
-      if (RandomSquaredRadius <= RadiusSquared) NbPointsIn++;
+      if (RandomSquaredRadius <= RadiusSquared) NbPointsInCircle++;
     }
 
-    auto             EstimatedPi = (4.0 * NbPointsIn) / NbPoints;
+    auto EstimatedPi    = (4.0 * NbPointsInCircle) / NbPoints;
     constexpr double PI = 3.14159265359;                                        // A reference value you can use for Pi is 3.14159265359
-    Distances[m] = fabs(PI - EstimatedPi);
+    vErrors.push_back(fabs(PI - EstimatedPi));
   }
-  return Distances;
+  return vErrors;
 }
 
 // ----------------------------------------------------------------------------
 int main() {
   
-  auto time0 = std::chrono::high_resolution_clock::now();
+  std::vector<std::future<VectOfErrors>> ErrorsAtRadiusConstant;                // ErrorsAtRadiusConstant is a vector of futures. Each future is a vector of Error(s)
   
-  std::cout << std::fixed << std::setprecision(9);                              // Modifies the default formatting attribute for "nice" floating-point output
-  
-  std::vector<std::future<std::vector<double>>> Distances;                      // Distances is a vector to sote 
-  
-  for (auto n = 0; n < 10; ++n) {
+  constexpr int NB_RADIUS = 10;
+  for (auto n = 0; n < NB_RADIUS; ++n) {
     auto Radius = pow(10, n);                                                   // Radius in the form of 10^n where 0 <= n <= 9 
-    Distances.push_back(std::async(std::launch::async, MyTask, Radius));
+    ErrorsAtRadiusConstant.push_back(std::async(std::launch::async, ErrorsCalculation, Radius));
   }
 
-  for (auto &d : Distances) {
-    auto Results = d.get();
-    for (auto &r : Results) {
-      std::cout << r << "\t";
+  std::cout << std::fixed << std::setprecision(9);                              // Modifies default formatting attributes for "nice" floating-point output
+  for (auto &MyFuture : ErrorsAtRadiusConstant) {
+    auto VectErr = MyFuture.get();                                              // Blocking. Wait for the each future
+    for (auto &Err : VectErr) {                                                 // Print out the content of the future
+      std::cout << Err << "\t";
     }
-    std::cout << std::endl;
+    std::cout << "\n";
   }
-  
-  auto time1 = std::chrono::high_resolution_clock::now();
-  std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(time1 - time0).count() << " miliseconds passed\n";
 
   std::cout << "Press ENTER to quit : ";
-  std::cin.get();                                                               //std::cin.ignore((std::numeric_limits<std::streamsize>::max)(), '\n');
+  std::cin.get();                                                               //std::cin.get() more expressive than std::cin.ignore((std::numeric_limits<std::streamsize>::max)(), '\n');
 }
+
+
+/*
+#include <chrono>
+auto t0 = std::chrono::high_resolution_clock::now();                          // Benchmark purpose
+auto t1 = std::chrono::high_resolution_clock::now();                          // Benchmark purpose
+std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(t1 - t0).count() << " miliseconds\n";
+
+*/
